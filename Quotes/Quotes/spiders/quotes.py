@@ -17,8 +17,6 @@ class QuotesSpider(scrapy.Spider):
             loader.add_css('tags', '.tag::text')
             quote_item = loader.load_item()
             author_url = quote.css('.author + a::attr(href)').get() # + ?
-            # Bug : replace meta 
-            # use the ``cb_kwargs`` functionality of :class:`~scrapy.http.Request` to pass a partially populated item.
             yield response.follow(author_url,  self.parse_author, meta = {'quote_item' : quote_item})
         
         for a in response.css('li.next a'):

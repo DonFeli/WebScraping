@@ -12,6 +12,8 @@ BOT_NAME = 'Quotes'
 SPIDER_MODULES = ['Quotes.spiders']
 NEWSPIDER_MODULE = 'Quotes.spiders'
 
+CONNECTION_STRING = "postgresql+psycopg2://felita:pokl@localhost:5432"
+
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'Quotes (+http://www.yourdomain.com)'
@@ -61,9 +63,10 @@ NEWSPIDER_MODULE = 'Quotes.spiders'
 
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
-#ITEM_PIPELINES = {
-#    'Quotes.pipelines.QuotesPipeline': 300,
-#}
+ITEM_PIPELINES = {
+   'Quotes.pipelines.QuotesPipeline': 300,
+   # 300 is the priority order of the pipeline
+}
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html

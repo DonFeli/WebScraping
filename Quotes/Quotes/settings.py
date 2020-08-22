@@ -12,7 +12,7 @@ BOT_NAME = 'Quotes'
 SPIDER_MODULES = ['Quotes.spiders']
 NEWSPIDER_MODULE = 'Quotes.spiders'
 
-CONNECTION_STRING = "postgresql+psycopg2://felita:pokl@localhost:5432"
+CONNECTION_STRING = "postgresql://felita:pokl@localhost:5432/quotes"
 
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
@@ -64,7 +64,8 @@ CONNECTION_STRING = "postgresql+psycopg2://felita:pokl@localhost:5432"
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-   'Quotes.pipelines.QuotesPipeline': 300,
+   'Quotes.pipelines.SaveQuotesPipeline': 300,
+   'Quotes.pipelines.DuplicatesPipeline': 100,
    # 300 is the priority order of the pipeline
 }
 

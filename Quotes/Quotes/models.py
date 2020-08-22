@@ -22,13 +22,13 @@ def create_table(engine):
 # https://docs.sqlalchemy.org/en/13/orm/basic_relationships.html#many-to-many
 quote_tag = Table('quote_tag', Base.metadata,
                   Column('quote_id', Integer, ForeignKey('quote.id')),
-                  Column('tag_id', Integer, ForeignKey('tag_id'))
+                  Column('tag_id', Integer, ForeignKey('tag.id'))
 )
 
 class Quote(Base):
     __tablename__ = "quote"
     
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key = True)
     quote_content = Column('quote_content', Text())
     author_id = Column(Integer, ForeignKey('author.id')) # many quotes to one author
     tags = relationship('Tag', secondary = 'quote_tag', lazy = 'dynamic', backref = 'quote') # many-to-many for quote and tag
@@ -38,7 +38,7 @@ class Author(Base):
     
     id = Column(Integer, primary_key = True)
     name = Column('name', String(50), unique = True)
-    birthday = Column('bio', Text())
+    birthday = Column('birthday', Text())
     bornlocation = Column('bornlocation', String(50))
     bio = Column('bio', Text())
     quotes = relationship('Quote', backref = 'author') # one author to many quotes

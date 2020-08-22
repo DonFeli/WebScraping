@@ -4,24 +4,42 @@ Saves the item to the database
 from sqlalchemy.orm import sessionmaker
 from scrapy.exceptions import DropItem
 from Quotes.models import Quote, Author, Tag, db_connect, create_table
-
+import logging
 # useful for handling different item types with a single interface
 from itemadapter import ItemAdapter
 
+class DuplicatesPipeline(object):
 
-class QuotesPipeline:
+    def __init__(self):
+        """
+        Initializes database connection and sessionmaker.
+        Creates tables.
+        """
+        engine = db_connect()
+        create_table(engine)
+        self.Session = sessionmaker(bind=engine)
+        logging.info("****DuplicatesPipeline: database connected****")
+
     def process_item(self, item, spider):
-        return item
+        session = self.Session()
+        exist_quote = session.query(Quote).filter_by(quote_content = item["quote_content"]).first()
+        if exist_quote is not None:  # the current quote exists
+            raise DropItem("Duplicate item found: %s" % item["quote_content"])
+            session.close()
+        else:
+            return item
+            session.close()
     
 class SaveQuotesPipeline(object):
     def __init__(self): 
         '''
         Initializes db conncetion and sessionmaker
-        Creates tables
+        Creates tables if not exists yet (otherwise ignore)
         '''
         engine = db_connect()
         create_table(engine)
         self.Session = sessionmaker(bind = engine)
+        logging.info("****SaveQuotePipeline: database connected****")
     
     def process_item(self, item, spider):
         '''
@@ -50,7 +68,7 @@ class SaveQuotesPipeline(object):
             for tag_name in item["tags"]:
                 tag = Tag(name = tag_name)
                 # Check whether the current tag already exists in the database
-                exist_tag = session.query(tag).filter_by(name = tag.name).first()
+                exist_tag = session.query(Tag).filter_by(name = tag.name).first()
                 if exist_tag is not None: 
                     tag = exist_tag
                 quote.tags.append(tag)

@@ -9,5 +9,8 @@ from itemadapter import ItemAdapter
 
 
 class MsrPipeline:
-    def process_item(self, item, spider):
-        return item
+    # def process_item(self, item, spider):
+    #     return item
+    def file_path(self, request, response=None, info=None): 
+        file_name: str = request.url.split("/")[-1]
+        return file_name

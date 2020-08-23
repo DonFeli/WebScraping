@@ -1,25 +1,18 @@
 import scrapy
-from scrapy import Request
 
 
-class MsrSpider(scrapy.Spider):
+class MairieStRestitut_Spider(scrapy.Spider):
     name = 'msr'
-    allowed_domains = ['https://saintrestitut-mairie.fr/comptes-rendus-des-conseils-municipaux/']
-    start_urls = ['http://https://saintrestitut-mairie.fr/comptes-rendus-des-conseils-municipaux//']
 
-    def parse(self, response):
-        for href in response.css('a::attr(href)').get():
-            yield Request(
-                url=response.urljoin(href),
-                callback=self.parse_article
-            )
+    def start_requests(self):
+        url = 'https://saintrestitut-mairie.fr/comptes-rendus-des-conseils-municipaux/'
+        yield scrapy.Request(url = url, callback = self.parse_pdf)
 
-    def parse_article(self, response):
-        for href in response.css('a[href$=".pdf"]::attr(href)').get():
-            yield Request(
-                url=response.urljoin(href),
-                callback=self.save_pdf
-            )
+    def parse_pdf(self, response):
+        pdf_urls = response.css('a[href$=".pdf"]::attr(href)').getall()
+        
+        for pdf_url in pdf_urls:
+            yield response.follow(pdf_url, callback = self.save_pdf)
 
     def save_pdf(self, response):
         path = response.url.split('/')[-1]
